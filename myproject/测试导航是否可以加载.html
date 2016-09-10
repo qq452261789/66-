@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			.nav_a:hover{
+				background: red;
+				line-height: 100%;
+			}
+		</style>
+		<script type="text/javascript">
+			function getCookie(name) {
+				var name = name + "=";
+				var cookies = document.cookie.split("; ");
+				for(var i = 0; i < cookies.length; i++) {
+					if(cookies[i].indexOf(name) == 0) {
+						return cookies[i].substring(name.length);
+					}
+				}
+				return "";
+			}
+			window.onload = function() {
+				var maseeges = getCookie("mm")
+				var nav = document.getElementById('nav');
+				 infor = JSON.parse(maseeges);
+				 console.log(infor)
+				nav.style.width = infor[0].width;
+				nav.style.height = infor[0].height;
+				nav.style.position =  infor[0].position;
+				nav.style.border = infor[0].bodernum;
+				nav.style.left = infor[0].left +"px";
+				nav.style.top = infor[0].top+"px";
+				
+				for(var i =0 ;i<infor[1].length;i++ ){					
+					var a = document.createElement("a");
+					a.setAttribute("href",infor[1][i]);					
+					a.innerHTML = infor[2][i];					
+					a.style.marginRight = infor[3][i];					
+					a.style.textDecoration = infor[4][i];
+					a.style.lineHeight = infor[5][i];
+					a.className ="nav_a";
+					nav.appendChild(a);
+					
+				}
+				
+			}
+		</script>
+	</head>
+
+	<body>
+		<div id="nav">
+			
+		</div>
+	</body>
+
+</html>
