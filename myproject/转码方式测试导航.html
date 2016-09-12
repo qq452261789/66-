@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			#box a:hover {
+				background: #ef0824;
+				line-height: 100%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<a href="转码储存数据测试导航.html" target="_blank">返回编辑</a>
+		<div id="box">
+			
+		</div>
+	</body>
+	<script type="text/javascript">
+		function getCookie(name) {
+			var name = name + "=";
+			var cookies = document.cookie.split("; ");
+			for(var i = 0; i < cookies.length; i++) {
+				if(cookies[i].indexOf(name) == 0) {
+					console.log(cookies[i])
+					return cookies[i].substring(name.length);
+				}
+			}
+			return "";
+		}
+		function encodeUTF8(str) {
+			var temp = "",
+				rs = "";
+			for(var i = 0, len = str.length; i < len; i++) {
+				temp = str.charCodeAt(i).toString(16);
+				rs += "\\u" + new Array(5 - temp.length).join("0") + temp;
+			}
+			return rs;
+		}
+
+		function decodeUTF8(str) {
+			return str.replace(/(\\u)(\w{4}|\w{2})/gi, function($0, $1, $2) {
+				return String.fromCharCode(parseInt($2, 16));
+			});
+		}
+		var box = document.getElementById("box");
+		var cookie_nav = localStorage.getItem("nav");
+		var demyhtml = decodeUTF8(cookie_nav);
+		console.log(demyhtml);
+		box.innerHTML = demyhtml;
+	</script>
+
+</html>

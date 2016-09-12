@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<style type="text/css">
+			* {
+				padding: 0;
+				margin: 0;
+			}
+			
+			span {
+				width: 10px;
+				height: 10px;
+				background: red;
+				border-radius: 5px;
+				position: absolute;
+				bottom: -5px;
+				right: -5px;
+				z-index: 10;
+			}
+			
+			.b {
+				position: absolute;
+				left: 500px;
+				top: 200px;
+			}
+			
+			.nav_a {
+				min-width: 10px;
+				min-height: 20px;
+				display: block;
+				float: left;
+				text-decoration: none;
+				margin-right: 15px;
+				font-weight: 500;
+			}
+			
+			#is_inedit {
+				background: #ef0824;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="box">
+
+		</div>
+		<ul>
+			<li><button id="btn">点击一下创建导航标签</button></li>
+			<li><button id="btn1">新的导航链接</button></li>
+			<li><button id="btn2">删除导航</button></li>
+			<li>
+				<label>
+	       			 请改变颜色
+	        		<input type="color" value="#000000" id="color">
+    			</label>
+			</li>
+			<li>
+				<label>
+			                      请改变粗细
+			        <input id = "bwide" type="text" />
+			    </label>
+			</li>
+			<li>
+				<label>
+        			请改变边线透明度
+       				<input id = "bopacity" type="text" />
+    			</label>
+			</li>
+			<li>
+				请改URL
+				<input placeholder="请改URL" type="text" value="" id="url">
+			</li>
+			<li>
+				<input placeholder="请改导航名称" type="text" value="" id="text">
+			</li>
+			<li>
+				<input placeholder="请改变导航行高" type="text" value="" id="line_height">
+			</li>
+			<li>
+				<button id="submit">发布</button>
+			</li>
+			<li>
+				<div id="ab">
+					<a id="a" href="转码方式测试导航.html" target="_blank" >测试导航</a>
+				</div>
+			</li>
+		</ul>
+	</body>
+	<script type="text/javascript">
+		/*var a =document.getElementById("a");
+		var ab =document.getElementById("ab");
+		ab.onmouseover = function(){
+			ab.style.background = "red"
+			ab.setAttribute("contenteditable","true")
+		}
+		ab.onmouseleave = function(){
+			ab.style.background = "#fff";
+			ab.removeAttribute("contenteditable","true")
+		}*/
+		
+		var btn = document.getElementById("btn");
+		var btn1 = document.getElementById("btn1");
+		var btn2 = document.getElementById("btn2");
+		var color = document.getElementById("color");
+		var bwide = document.getElementById("bwide");
+		var bopacity = document.getElementById("bopacity");
+		var submit = document.getElementById("submit");
+		var a_url = document.getElementById("url");
+		var a_text = document.getElementById("text");
+		var a_line_height = document.getElementById("line_height");
+		var box = document.getElementById("box");
+
+		//获取存贮的信息
+		var cookie_nav = localStorage.getItem("nav");
+		if(cookie_nav) {
+			var demyhtml = decodeUTF8(cookie_nav);
+			console.log(demyhtml);
+			box.innerHTML = demyhtml;
+			var _nav = document.getElementById("nav");
+			var _span = _nav.getElementsByTagName("span")[0];
+			tergle(_nav, _span);
+		}
+		clearCookieall();
+
+		function nav_box() {
+			this.w = "600px";
+			this.h = "35px";
+			this.col = "#fff";
+			this.txt = "hello world";
+			this.borderw = "1px";
+			this.borders = "solid";
+			this.bordercol = "black";
+			this.borderra = "0"
+			this.contenteditable = "true";
+			this.textalign = "center";
+			this.lineheight = "35px";
+			this.position = "absolute";
+			this.bopacity = "rgba(0,0,0,1)";
+			this.background = "#1f3bcd"
+		}
+
+		function nav_box_a() {
+			this.min_width = "60px";
+			this.min_height = "20px";
+			this.display = "block";
+			this.float = "left";
+			this.text_decoration = " none";
+			this.margin_left = "15px";
+			this.textalign = "center";
+			this.color = "#fff";
+			this.fontweight = "800";
+			this.lineheight = "35px";
+			this.borderradius = " 3PX";
+		}
+		var nav,
+			span;
+		var disX = 0,
+			disY = 0;
+		var top_index = 0; //寻找事件处理对象的标志位
+		var top_ele = 1; //当前定位到的模块
+		var index = -1; //给创建的各个模块定位
+		var index_pbox = 0; //创建的p标签个数
+		var nodes = []; //储藏节点信息的数组
+		var objs = []; //储藏所有构造函数信息的数组
+		var infor = []; //储藏所有信息的数组
+		var infors; //储藏所有信息数组的json格式
+		//localStorage.removeItem("nav")
+		//点击生成按钮，生成模块，并且赋予基础信息		
+
+		var aobj = new nav_box_a();
+
+		btn.onclick = function() {
+				index++; //每生成一个模块标志位+1
+				nav = document.createElement("div");
+				var obj = new nav_box();
+				objs.push(nav); //将该块的综合信息压入数组.						
+				nodes.push("div"); //将该块的标签信息压入数组					
+				nav.style.width = obj.w;
+				nav.style.height = obj.h;
+				nav.style.backgroundColor = obj.col;
+				nav.style.borderWidth = obj.borderw;
+				nav.style.borderStyle = obj.borders;
+				nav.style.borderColor = obj.bordercol;
+				nav.style.borderRadius = obj.borderra;
+				nav.style.textAlign = obj.textalign;
+				nav.style.lineHeightr = obj.lineheight;
+				nav.style.background = obj.background;
+				nav.style.position = obj.position;
+				nav.setAttribute("id", "nav");
+				nav.setAttribute("class", "nav");
+
+				for(var i = 0; i < 6; i++) {
+					var nav_a = document.createElement("a");
+					nav_a.style.minHeight = aobj.min_height;
+					nav_a.style.minWidth = aobj.min_width;
+					nav_a.style.display = aobj.display;
+					nav_a.style.float = "left";
+					nav_a.style.textDecoration = aobj.text_decoration;
+					nav_a.style.marginLeft = aobj.margin_left;
+					nav_a.style.textAlign = aobj.textalign;
+					nav_a.style.color = aobj.color;
+					nav_a.style.fontWeight = aobj.fontweight;
+					nav_a.style.lineHeight = aobj.lineheight;
+					nav_a.style.borderRadius = aobj.borderradius;
+					nav_a.innerHTML = "自定义导航"
+					nav_a.className = "is_created_nav_a"
+					nav_a.setAttribute("href", "https://www.baidu.com");
+					nav.appendChild(nav_a);
+				}
+				span = document.createElement("span");
+				nav.appendChild(span);
+				box.appendChild(nav);
+				tergle(nav, span)
+			}
+			//点击生成新导航并设置导航的基本信息	
+		if(cookie_nav) {
+			btn1.onclick = function() {
+				var nav_a = document.createElement("a");
+				nav_a.style.minHeight = aobj.min_height;
+				nav_a.style.minWidth = aobj.min_width;
+				nav_a.style.display = aobj.display;
+				nav_a.style.float = "left";
+				nav_a.style.textDecoration = aobj.text_decoration;
+				nav_a.style.marginLeft = aobj.margin_left;
+				nav_a.style.textAlign = aobj.textalign;
+				nav_a.style.color = aobj.color;
+				nav_a.style.fontWeight = aobj.fontweight;
+				nav_a.style.lineHeight = aobj.lineheight;
+				nav_a.style.borderRadius = aobj.borderradius;
+				nav_a.innerHTML = "自定义导航"
+				nav_a.className = "is_created_nav_a"
+				nav_a.setAttribute("href", "https://www.baidu.com");
+				var _nav = document.getElementById("nav");
+				_nav.appendChild(nav_a);
+
+			}
+		} else {
+			btn1.onclick = function() {
+				var nav_a = document.createElement("a");
+				nav_a.style.minHeight = aobj.min_height;
+				nav_a.style.minWidth = aobj.min_width;
+				nav_a.style.display = aobj.display;
+				nav_a.style.float = "left";
+				nav_a.style.textDecoration = aobj.text_decoration;
+				nav_a.style.marginLeft = aobj.margin_left;
+				nav_a.style.textAlign = aobj.textalign;
+				nav_a.style.color = aobj.color;
+				nav_a.style.fontWeight = aobj.fontweight;
+				nav_a.style.lineHeight = aobj.lineheight;
+				
+				nav_a.innerHTML = "自定义导航";
+				nav_a.className = "is_created_nav_a"
+				nav_a.setAttribute("href", "https://www.baidu.com");
+				nav.appendChild(nav_a);
+			}
+		}
+		btn2.onclick = function() {
+			alert(123);
+			document.getElementById("is_inedit").remove()
+		}
+		//拖拽span改变导航盒子的宽高。。以及拖拽高边导航盒子的位置
+		function tergle(boj, bojchild) {
+			boj.onmousedown = function(e) {
+				var e = e || window.event
+				disx = e.clientX - this.offsetLeft
+				disy = e.clientY - this.offsetTop
+				document.onmousemove = function(e) {
+					var e = e || window.event
+					boj.style.left = (e.clientX - disx) + "px"
+					boj.style.top = (e.clientY - disy) + "px"
+				}
+				document.onmouseup = function() {
+					document.onmousemove = null
+				}
+				return false;
+				e.cancelBubble = true;
+			};
+
+			bojchild.onmousedown = function(e) {
+				var e = e || window.event
+				disX = e.clientX
+				disY = e.clientY
+				var divpos = boj.getBoundingClientRect();
+				document.onmousemove = function(e) {
+					var e = e || window.event
+					changeX = e.clientX - disX
+					changeY = e.clientY - disY
+					boj.style.width = (divpos.width + changeX) + "px"
+					boj.style.height = (divpos.height + changeY) + "px"
+				}
+				document.onmouseup = function() {
+					document.onmousemove = null
+				}
+				e.cancelBubble = true;
+			}
+			
+		}
+		
+		//这里出现BUG  就是鼠标划入的时候A标签的属性是可编辑状态，但是不可编辑A标签。。。
+		
+		//鼠标滑到导航A链接使得超链接的属性变为课编辑
+		document.onmouseover = function(ev) {
+			var ev = ev || window.event;
+			var target = ev.target || ev.srcElement;
+			if(ev&&ev.stopPropagation()){
+				ev.stopPropagation()
+			}else{
+				ev.cancelBubble = true;
+			}
+			//事件委托指向class 为is_created_nav_a的导航A标签  
+			if(target.className == "is_created_nav_a") {
+				target.style.background = "red";
+				target.setAttribute("contenteditable", "true");
+			}
+			
+			
+		}
+		document.onmouseout = function(ev) {
+			var ev = ev || window.event;
+			var target = ev.target || ev.srcElement;
+			if(ev&&ev.stopPropagation()){
+				ev.stopPropagation()
+			}else{
+				ev.cancelBubble = true;
+			}
+			//事件委托指向class 为is_created_nav_a的导航A标签
+			if(target.className == "is_created_nav_a") {
+				console.log(target.className);
+				target.style.background = "";
+				target.removeAttribute("contenteditable", "true")
+				ev.cancelBubble = true;
+			}
+			
+		}
+		document.addEventListener("click", function(ev) {
+			var ev = ev || window.event;
+			var target = ev.target || ev.srcElement;
+			if(ev&&ev.stopPropagation()){
+				ev.stopPropagation()
+			}else{
+				ev.cancelBubble = true;
+			}
+			//事件委托指向class 为is_created_nav_a的导航A标签
+			if(target.className == "is_created_nav_a") {
+				var asdf = document.getElementById("is_inedit").isContentEditable;
+				console.log(asdf);
+				console.log(target.className);
+				target.style.background = " ";
+				target.setAttribute("contenteditable", "true");
+				//ev.cancelBubble = true;
+			}
+		
+		}, false);
+		
+		
+		//颜色改变
+		color.onchange = function() {
+				nav.style.background = color.value;
+			}
+			//边界宽度改变
+		bwide.onblur = function() {
+				objs[top_index].borderw = bwide.value;
+				top_ele.style.borderWidth = objs[top_index].borderw;
+			}
+			//边框透明度改变
+		bopacity.onblur = function() {
+			objs[top_index].bopacity = "rgba(0,0,0," + bopacity.value + ")";
+			top_ele.style.borderColor = objs[top_index].bopacity;
+		}
+
+		//改变URL  
+		a_url.onblur = function() {
+				var isedit_a = document.getElementById('is_inedit')
+				isedit_a.setAttribute("href", a_url.value);
+			}
+			//改变导航名称
+		a_text.onblur = function() {
+				var isedit_a = document.getElementById('is_inedit')
+				isedit_a.innerHTML = a_text.value;
+			}
+			//改变导航字体行高 
+		a_line_height.onblur = function() {
+				var num_a = document.getElementsByClassName("is_created_nav_a")
+				for(var i = 0; i < num_a.length; i++) {
+					num_a[i].style.lineHeight = a_line_height.value + "px";
+				}
+			}
+			// 发布保存数据
+		submit.onclick = function() {
+				var myhtml = document.getElementById("box").innerHTML;
+				//var nav_cookie = decodeUTF8(myhtml);	
+				var nav_cookie = encodeUTF8(myhtml);
+				console.log("nav_cookie")
+					//setCookie("nav", nav_cookie, 3);
+				localStorage.setItem("nav", nav_cookie);
+				console.log("网页发布成功！");
+			}
+			//调节模块的大小 使用事件
+		document.addEventListener("click", function(e) {
+			var e = e || e.event;
+			var target = e.target;
+			if(target.className == "is_created_nav_a") {
+				var aa = document.getElementsByClassName("is_created_nav_a");
+				for(var i = 0; i < aa.length; i++) {
+					aa[i].removeAttribute("id", "is_inedit");
+					aa[i].removeAttribute("contenteditable", "true");
+				}
+				target.setAttribute("id", "is_inedit");
+				target.setAttribute("contenteditable", "true");
+				e.cancelBubble = true;
+			}
+			e.cancelBubble = true;
+		}, false);
+
+		function encodeUTF8(str) {
+			var temp = "",
+				rs = "";
+			for(var i = 0, len = str.length; i < len; i++) {
+				temp = str.charCodeAt(i).toString(16);
+				rs += "\\u" + new Array(5 - temp.length).join("0") + temp;
+			}
+			return rs;
+		}
+
+		function decodeUTF8(str) {
+			return str.replace(/(\\u)(\w{4}|\w{2})/gi, function($0, $1, $2) {
+				return String.fromCharCode(parseInt($2, 16));
+			});
+		}
+		//设置cookie 
+		function setCookie(name, value, days) {
+			var nowTime = (new Date()).getTime(); //当前的时间戳
+			var expiresDay = new Date(nowTime + days * 24 * 60 * 60 * 1000);
+			document.cookie = name + "=" + value + "; expires=" + expiresDay;
+		}
+		//清除cookie 
+		function clearCookie(name) {
+			setCookie(name, "", -1); //清除cookie就是设置为过期时间
+		}
+		//清除所有cookie
+		function clearCookieall() {
+			var cookies = document.cookie.split("; ");
+			var lens = cookies.length;
+			for(var i = 0; i < lens; i++) {
+				clearCookie(cookies[i].split("=")[0]);
+			}
+		}
+	</script>
+
+</html>
